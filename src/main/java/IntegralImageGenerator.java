@@ -60,7 +60,7 @@ public class IntegralImageGenerator {
 
         double[][] integralImage = getMatrixOfBrightness();
 
-        printMatrix(integralImage);
+//        printMatrix(integralImage);
         System.out.println();
 
 
@@ -75,7 +75,7 @@ public class IntegralImageGenerator {
             }
         }
 
-        printMatrix(integralImage);
+//        printMatrix(integralImage);
 
         return integralImage;
 
@@ -91,7 +91,7 @@ public class IntegralImageGenerator {
     }
 
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
 //        String input = "C:/Users/GlAz/Desktop/test.jpg";
         String input = "src/main/resources/test.jpg";
         IntegralImageGenerator generator = new IntegralImageGenerator();
@@ -100,5 +100,5 @@ public class IntegralImageGenerator {
 //        generator.getMatrixOfBrightness();
         generator.getIntegralImage();
 
-    }
+    }*/
 }
