@@ -1,3 +1,5 @@
+import com.sun.istack.internal.NotNull;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -8,9 +10,7 @@ import java.io.IOException;
 public class IntegralImage {
     private final double[][] integralImage;
 
-    public IntegralImage(final BufferedImage bufferedImage) {
-        if (bufferedImage == null)
-            throw new IllegalArgumentException();
+    public IntegralImage(@NotNull final BufferedImage bufferedImage) {
 
         double[][] matrixOfBrightness = new double[bufferedImage.getHeight()][bufferedImage.getWidth()];
 
@@ -66,8 +66,7 @@ public class IntegralImage {
         return integralImage[0].length;
     }
 
-    /*
-    private void printMatrix() {
+/*    private void printMatrix() {
         for (int i = 0; i < integralImage.length; i++) {
             for (int j = 0; j < integralImage[0].length; j++) {
                 System.out.printf("%8.1f ", integralImage[i][j]);
