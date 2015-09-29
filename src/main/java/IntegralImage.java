@@ -57,7 +57,16 @@ public class IntegralImage {
 
         return result;
     }
-/*
+
+    public int getHeight() {
+        return integralImage.length;
+    }
+
+    public int getWidth() {
+        return integralImage[0].length;
+    }
+
+    /*
     private void printMatrix() {
         for (int i = 0; i < integralImage.length; i++) {
             for (int j = 0; j < integralImage[0].length; j++) {
