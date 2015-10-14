@@ -1,7 +1,5 @@
 import com.sun.istack.internal.NotNull;
 
-import java.awt.*;
-
 public class Primitive {
     private final Point v1;
     private final Point v2;
@@ -16,9 +14,36 @@ public class Primitive {
         this.v4 = v4;
     }
 
-    public Point[] getVertexes() {
-        Point[] vertexes = new Point[] {v1, v2, v3, v4};
-        return vertexes;
+    public Primitive() {
+        this.v1 = null;
+        this.v2 = null;
+        this.v3 = null;
+        this.v4 = null;
     }
 
+    public Point getV1() {
+        return v1;
+    }
+
+    public Point getV2() {
+        return v2;
+    }
+
+    public Point getV3() {
+        return v3;
+    }
+
+    public Point getV4() {
+        return v4;
+    }
+
+    @Override
+    public String toString() {
+        return "Primitive{" +
+                "v1=" + v1 +
+                ", v2=" + v2 +
+                ", v3=" + v3 +
+                ", v4=" + v4 +
+                '}';
+    }
 }

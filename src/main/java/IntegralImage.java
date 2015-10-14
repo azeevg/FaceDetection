@@ -58,6 +58,20 @@ public class IntegralImage {
         return result;
     }
 
+
+    private double getIntegralImage(final Point v1, final Point v2, final Point v3, final Point v4) {
+        double result = 0;
+
+        return result;
+    }
+
+    public double handleCascade(Cascade cascade) {
+        double result = 0;
+
+        return result;
+    }
+
+
     public int getHeight() {
         return integralImage.length;
     }
@@ -65,6 +79,8 @@ public class IntegralImage {
     public int getWidth() {
         return integralImage[0].length;
     }
+
+
 
 /*    private void printMatrix() {
         for (int i = 0; i < integralImage.length; i++) {
