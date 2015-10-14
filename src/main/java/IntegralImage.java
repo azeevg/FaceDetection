@@ -1,11 +1,8 @@
 import com.sun.istack.internal.NotNull;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
+import java.util.Collection;
 
 public class IntegralImage {
     private final double[][] integralImage;
@@ -16,7 +13,7 @@ public class IntegralImage {
 
         for (int i = 0; i < bufferedImage.getHeight(); i++) {
             for (int j = 0; j < bufferedImage.getWidth(); j++) {
-                matrixOfBrightness[i][j] = getBrightness(bufferedImage.getRGB(j, i));
+                matrixOfBrightness[i][j] = calculateBrightness(bufferedImage.getRGB(j, i));
             }
         }
 
@@ -36,41 +33,41 @@ public class IntegralImage {
 //        printMatrix();
     }
 
-    private static double getBrightness(final int rgb) {
+    private static double calculateBrightness(final int rgb) {
         Color color = new Color(rgb);
         return (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255.0;
     }
 
-    private double getIntegralImage(final int xOffset, final int yOffset, final int xBound, final int yBound) {
-        if (xOffset < 0 || yOffset < 0 || yBound > integralImage.length || xBound > integralImage[0].length ||
-                (xOffset > xBound || yOffset > yBound))
-            throw new IllegalArgumentException();
+    private double getBrightness(@NotNull final Point point) {
+        return integralImage[point.getY()][point.getX()];
+    }
 
-        double result = integralImage[yBound][xBound];
-
-        if (yOffset > 0)
-            result -= integralImage[yOffset - 1][xBound];
-        if (xOffset > 0)
-            result -= integralImage[yBound][xOffset - 1];
-        if (yOffset > 0 && xOffset > 0)
-            result += integralImage[yOffset - 1][xOffset - 1];
+    private double getBrightness(@NotNull final Point[] points) {
+        // it works only with rectangles, which edges are parallel to the axes
+        double result = getBrightness(points[2]) - getBrightness(points[0]);
 
         return result;
     }
 
-
-    private double getIntegralImage(final Point v1, final Point v2, final Point v3, final Point v4) {
+    private double getTotalBrightness(@NotNull final Collection<Primitive> primitives) {
         double result = 0;
 
+        for (Primitive p : primitives) {
+            result += handlePrimitive(p);
+        }
         return result;
     }
 
-    public double handleCascade(Cascade cascade) {
-        double result = 0;
+    public double handleCascade(@NotNull final Cascade cascade) {
+        double white = getTotalBrightness(cascade.getWhitePrimitives());
+        double black = getTotalBrightness(cascade.getBlackPrimitives());
 
-        return result;
+        return white - black;
     }
 
+    private double handlePrimitive(@NotNull final Primitive primitive) {
+        return getBrightness(primitive.getVertexes());
+    }
 
     public int getHeight() {
         return integralImage.length;

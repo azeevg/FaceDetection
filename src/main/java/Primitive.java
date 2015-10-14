@@ -1,4 +1,5 @@
 import com.sun.istack.internal.NotNull;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Primitive {
     private final Point v1;
@@ -19,6 +20,12 @@ public class Primitive {
         this.v2 = null;
         this.v3 = null;
         this.v4 = null;
+    }
+
+    @JsonIgnore
+    public Point[] getVertexes() {
+        Point[] vertexes = new Point[]{v1, v2, v3, v4};
+        return vertexes;
     }
 
     public Point getV1() {
