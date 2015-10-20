@@ -1,9 +1,5 @@
-import java.io.Serializable;
 
-/**
- * Created by GlAz on 14.10.2015.
- */
-public class Point implements Serializable{
+public class Point {
     private int x;
     private int y;
 

@@ -1,56 +1,34 @@
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class Primitive {
-    private final Point v1;
-    private final Point v2;
-    private final Point v3;
-    private final Point v4;
+
+    private List<Point> vertexes;
 
     public Primitive(@NotNull final Point v1, @NotNull final Point v2,
                      @NotNull final Point v3, @NotNull final Point v4) {
-        this.v1 = v1;
-        this.v2 = v2;
-        this.v3 = v3;
-        this.v4 = v4;
+        this.vertexes = Collections.unmodifiableList(Arrays.asList(v1, v2, v3, v4));
     }
 
     public Primitive() {
-        this.v1 = null;
-        this.v2 = null;
-        this.v3 = null;
-        this.v4 = null;
+        vertexes = null;
     }
 
-    @JsonIgnore
-    public Point[] getVertexes() {
-        Point[] vertexes = new Point[]{v1, v2, v3, v4};
+    public List<Point> getVertexes() {
         return vertexes;
-    }
-
-    public Point getV1() {
-        return v1;
-    }
-
-    public Point getV2() {
-        return v2;
-    }
-
-    public Point getV3() {
-        return v3;
-    }
-
-    public Point getV4() {
-        return v4;
     }
 
     @Override
     public String toString() {
-        return "Primitive{" +
-                "v1=" + v1 +
-                ", v2=" + v2 +
-                ", v3=" + v3 +
-                ", v4=" + v4 +
-                '}';
+        String result = "Primitive{vertexes=";
+        for (Point p : vertexes) {
+            result += p.toString() + " ";
+        }
+        return result + "}";
     }
 }

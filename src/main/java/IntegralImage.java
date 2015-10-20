@@ -1,7 +1,8 @@
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class IntegralImage {
@@ -42,9 +43,10 @@ public class IntegralImage {
         return integralImage[point.getY()][point.getX()];
     }
 
-    private double getBrightness(@NotNull final Point[] points) {
+    private double getBrightness(@NotNull final Primitive primitive) {
         // it works only with rectangles, which edges are parallel to the axes
-        double result = getBrightness(points[2]) - getBrightness(points[0]);
+        ArrayList<Point> points = (ArrayList<Point>) primitive.getVertexes();
+        double result = getBrightness(points.get(2)) - getBrightness(points.get(0));
 
         return result;
     }
@@ -66,7 +68,7 @@ public class IntegralImage {
     }
 
     private double handlePrimitive(@NotNull final Primitive primitive) {
-        return getBrightness(primitive.getVertexes());
+        return getBrightness(primitive);
     }
 
     public int getHeight() {
