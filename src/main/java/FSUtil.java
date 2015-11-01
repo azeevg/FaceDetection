@@ -5,7 +5,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -21,7 +20,7 @@ public class FSUtil {
         public boolean accept(File pathname) {
             String extension = FilenameUtils.getExtension(pathname.getName());
 
-            if (!pathname.isFile() || extension.length() == 0 || !extensions.contains(extension)) {
+            if (!pathname.isFile() || pathname.exists() || !extensions.contains(extension)) {
                 return false;
             }
 
@@ -44,13 +43,16 @@ public class FSUtil {
     }
 
     public void forEachImage(@NotNull Consumer<BufferedImage> consumer) throws IOException {
-        for (File f : directory.listFiles(fileFilter)) {
+        for (final File f : directory.listFiles(fileFilter)) {
             BufferedImage bufferedImage = ImageIO.read(f);
             consumer.accept(bufferedImage);
         }
     }
 
     private static void writeFeatureVector(BufferedImage image) {
+
+
+
         /*
         *
         * Here will be a method creates text-file with feature vector
@@ -61,8 +63,9 @@ public class FSUtil {
     public static void main(String[] args) {
         Consumer<BufferedImage> bufferedImageConsumer = img -> writeFeatureVector(img);
         FSUtil util;
+
         try {
-            util = new FSUtil("./resources", "output.txt");
+            util = new FSUtil("./src/main/resources/photos", "./src/main/output.txt");
         } catch (IOException e) {
             System.out.println("IOException: cannot create file");
         }

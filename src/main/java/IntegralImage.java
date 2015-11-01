@@ -39,14 +39,18 @@ public class IntegralImage {
         return (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255.0;
     }
 
-    private double getBrightness(@NotNull final Point point) {
-        return integralImage[point.getY()][point.getX()];
+    private double getBrightness(final int x, final int y) {
+        return integralImage[y][x];
     }
 
     private double getBrightness(@NotNull final Primitive primitive) {
         // it works only with rectangles, which edges are parallel to the axes
         ArrayList<Point> points = (ArrayList<Point>) primitive.getVertexes();
-        double result = getBrightness(points.get(2)) - getBrightness(points.get(0));
+
+        Point point = points.get(2);
+        double result = getBrightness((int)point.getX(), (int)point.getY());
+        point = points.get(0);
+        result -= getBrightness((int)point.getX(), (int)point.getY());
 
         return result;
     }
