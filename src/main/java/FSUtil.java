@@ -11,8 +11,9 @@ import java.util.function.Consumer;
 import java.io.File;
 
 public class FSUtil {
-    final File directory;
-    final File output;
+    private File directory;
+    private final File output;
+    private final List<Cascade> cascades;
 
     private static FileFilter fileFilter = new FileFilter() {
         private final List<String> extensions = Arrays.asList(ImageIO.getReaderFormatNames());
@@ -28,47 +29,82 @@ public class FSUtil {
         }
     };
 
-    public FSUtil(@NotNull String directory, @NotNull String output) throws IOException {
+    public void setDirectory(@NotNull final String directory) throws IllegalArgumentException {
         this.directory = new File(directory);
 
         if (!this.directory.isDirectory()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public FSUtil(@NotNull final String directory, @NotNull final String output, @NotNull final String cascade) throws IOException {
+        setDirectory(directory);
 
         this.output = new File(output);
 
         if (!this.output.exists()) {
             this.output.createNewFile();
         }
+
+        cascades = CascadeManager.readCascade(cascade);
     }
 
-    public void forEachImage(@NotNull Consumer<BufferedImage> consumer) throws IOException {
+    public void forEachImage(@NotNull final Consumer<BufferedImage> consumer) throws IOException {
         for (final File f : directory.listFiles(fileFilter)) {
             BufferedImage bufferedImage = ImageIO.read(f);
             consumer.accept(bufferedImage);
         }
     }
 
-    private static void writeFeatureVector(BufferedImage image) {
+    private void writeFeatureVector(@NotNull final BufferedImage image, final boolean isFace) {
+
+        String featureVector;
+        IntegralImage integralImage = new IntegralImage(image);
+
+        if (isFace) {
+            featureVector = "1 ";
+        } else {
+            featureVector = "0 ";
+        }
+
+        for (Cascade cascade : cascades) {
+            featureVector += handleCascade(integralImage);
+            appendToOutputFile(featureVector);
+        }
 
 
+    }
 
-        /*
-        *
-        * Here will be a method creates text-file with feature vector
-        *
-        * */
+    private void appendToOutputFile(String featureVector) {
+    }
+
+    private String handleCascade(IntegralImage integralImage) {
     }
 
     public static void main(String[] args) {
-        Consumer<BufferedImage> bufferedImageConsumer = img -> writeFeatureVector(img);
         FSUtil util;
+        String cascade = "./src/main/resources/cascade.json";
+        String facesPhotosDirectory = "./src/main/resources/photos/faces";
+        String notFacesPhotosDirectory = "./src/main/resources/photos/notFaces";
+        String output = "./src/main/output.txt";
+        boolean isFace = true;
+
+        // Non-static method cannot be referenced from a static context
+        Consumer<BufferedImage> faceImageConsumer = img -> writeFeatureVector(img, isFace);
+        Consumer<BufferedImage> notFaceImageConsumer = img -> writeFeatureVector(img, !isFace);
 
         try {
-            util = new FSUtil("./src/main/resources/photos", "./src/main/output.txt");
+            util = new FSUtil(facesPhotosDirectory, output, cascade);
+            util.forEachImage(faceImageConsumer);
+
+            util.setDirectory(notFacesPhotosDirectory);
+            util.forEachImage(notFaceImageConsumer);
+
         } catch (IOException e) {
             System.out.println("IOException: cannot create file");
         }
+
+
 
 
 
