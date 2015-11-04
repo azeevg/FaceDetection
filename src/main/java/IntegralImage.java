@@ -2,8 +2,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class IntegralImage {
     private final double[][] integralImage;
@@ -17,7 +17,8 @@ public class IntegralImage {
                 matrixOfBrightness[i][j] = calculateBrightness(bufferedImage.getRGB(j, i));
             }
         }
-
+//        printMatrix(matrixOfBrightness);
+//        System.out.println("\n\n");
         integralImage = matrixOfBrightness;
 
         for (int i = 0; i < bufferedImage.getHeight(); i++) {
@@ -31,7 +32,7 @@ public class IntegralImage {
             }
         }
 
-//        printMatrix();
+//        printMatrix(integralImage);
     }
 
     private static double calculateBrightness(final int rgb) {
@@ -43,36 +44,36 @@ public class IntegralImage {
         return integralImage[y][x];
     }
 
-    private double getBrightness(@NotNull final Primitive primitive) {
+    private double getBrightness(@NotNull final Primitive primitive, @NotNull final Vector shift) {
         // it works only with rectangles, which edges are parallel to the axes
-        ArrayList<Point> points = (ArrayList<Point>) primitive.getVertexes();
+        List<Point> points = primitive.getVertexes();
 
         Point point = points.get(2);
-        double result = getBrightness((int)point.getX(), (int)point.getY());
+        double result = getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
         point = points.get(0);
-        result -= getBrightness((int)point.getX(), (int)point.getY());
+        result -= getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
 
         return result;
     }
 
-    private double getTotalBrightness(@NotNull final Collection<Primitive> primitives) {
+    private double getTotalBrightness(@NotNull final Collection<Primitive> primitives, @NotNull final Vector shift) {
         double result = 0;
 
         for (Primitive p : primitives) {
-            result += handlePrimitive(p);
+            result += handlePrimitive(p, shift);
         }
         return result;
     }
 
-    public double handleCascade(@NotNull final Cascade cascade) {
-        double white = getTotalBrightness(cascade.getWhitePrimitives());
-        double black = getTotalBrightness(cascade.getBlackPrimitives());
+    public double handleCascade(@NotNull final Cascade cascade, @NotNull final Vector shift) {
+        double white = getTotalBrightness(cascade.getWhitePrimitives(), shift);
+        double black = getTotalBrightness(cascade.getBlackPrimitives(), shift);
 
         return white - black;
     }
 
-    private double handlePrimitive(@NotNull final Primitive primitive) {
-        return getBrightness(primitive);
+    private double handlePrimitive(@NotNull final Primitive primitive, @NotNull final Vector shift) {
+        return getBrightness(primitive, shift);
     }
 
     public int getHeight() {
@@ -84,16 +85,15 @@ public class IntegralImage {
     }
 
 
-
-/*    private void printMatrix() {
-        for (int i = 0; i < integralImage.length; i++) {
-            for (int j = 0; j < integralImage[0].length; j++) {
-                System.out.printf("%8.1f ", integralImage[i][j]);
+    private void printMatrix(double[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                System.out.printf("%8.1f ", matrix[i][j]);
             }
             System.out.println();
         }
     }
-
+/*
 
     public static void main(String[] args) {
         String filename = "src/main/resources/test.jpg";
