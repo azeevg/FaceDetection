@@ -49,11 +49,11 @@ public class IntegralImage {
         List<Point> points = primitive.getVertexes();
 
         Point point = points.get(2);
-        double result = getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
+        Double result = getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
         point = points.get(0);
         result -= getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
 
-        return result;
+        return result ;
     }
 
     private double getTotalBrightness(@NotNull final Collection<Primitive> primitives, @NotNull final Vector shift) {
@@ -88,7 +88,7 @@ public class IntegralImage {
     private void printMatrix(double[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                System.out.printf("%8.1f ", matrix[i][j]);
+                System.out.printf("%8.2f ", matrix[i][j]);
             }
             System.out.println();
         }

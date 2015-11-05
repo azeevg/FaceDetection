@@ -4,8 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class FSUtil {
@@ -79,16 +82,18 @@ public class FSUtil {
 
     private String handleCascade(@NotNull final Cascade scaledCascade, @NotNull final IntegralImage integralImage) {
         String result = "";
-        int step = 5;
+        final int step = 5;
 
         int cascadeWidth = (int) scaledCascade.getWidth();
         int cascadeHeight = (int) scaledCascade.getHeight();
+        //DecimalFormat format = new DecimalFormat("*.##");
 
         Vector shift;
         for (int i = 0; i < (integralImage.getHeight() - cascadeHeight) / step; i++) {
             for (int j = 0; j < (integralImage.getWidth() - cascadeWidth) / step; j++) {
                 shift = new Vector(j * step, i * step);
-                result += integralImage.handleCascade(scaledCascade, shift) + " ";
+//                result += integralImage.handleCascade(scaledCascade, shift) + " ";
+                result += String.format(Locale.ENGLISH, "%.2f", integralImage.handleCascade(scaledCascade, shift)) + " ";
             }
         }
 
@@ -136,5 +141,6 @@ public class FSUtil {
             System.out.println("IOException: cannot create file");
         }
     }
+
 }
 
