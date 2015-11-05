@@ -24,11 +24,15 @@ public class FSUtil {
     };
     private final File output;
     private final List<Cascade> cascades;
-    private File directory;
+    private final File directory;
     private PrintWriter printWriter;
 
     public FSUtil(@NotNull final String directory, @NotNull final String output, @NotNull final String cascade) throws IOException {
-        setDirectory(directory);
+        this.directory = new File(directory);
+
+        if (!this.directory.isDirectory()) {
+            throw new IllegalArgumentException();
+        }
 
         this.output = new File(output);
 
@@ -39,15 +43,6 @@ public class FSUtil {
         cascades = CascadeManager.readCascade(cascade);
     }
 
-
-    public void setDirectory(@NotNull final String directory) throws IllegalArgumentException {
-        this.directory = new File(directory);
-
-        if (!this.directory.isDirectory()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public void forEachImage(@NotNull final Consumer<BufferedImage> consumer) throws IOException {
         for (final File f : directory.listFiles(fileFilter)) {
             BufferedImage bufferedImage = ImageIO.read(f);
@@ -55,16 +50,9 @@ public class FSUtil {
         }
     }
 
-    private void writeFeatureVector(@NotNull final BufferedImage image, final boolean isFace) {
+    private void writeFeatureVector(@NotNull final BufferedImage image, @NotNull final ImageType imageType) {
 
-        String featureVector;
-
-        if (isFace) {
-            featureVector = "1 ";
-        } else {
-            featureVector = "0 ";
-        }
-
+        String featureVector = imageType.getNumber() + " ";
         featureVector += getFeatureVector(image);
 
         try {
@@ -109,21 +97,14 @@ public class FSUtil {
 
     private void appendToOutputFile(@NotNull final String featureVector) throws IOException {
         printWriter.println(featureVector);
-//        System.out.println(featureVector);
     }
 
-    // temporary solution
-    private void run(@NotNull final String notFacesPhotosDirectory) {
-        boolean isFace = true;
-
-        Consumer<BufferedImage> faceImageConsumer = img -> writeFeatureVector(img, isFace);
-        Consumer<BufferedImage> notFaceImageConsumer = img -> writeFeatureVector(img, !isFace);
+    private void run(@NotNull final ImageType imageType) {
+        Consumer<BufferedImage> consumer = img -> writeFeatureVector(img, imageType);
 
         try {
             printWriter = new PrintWriter(new BufferedWriter(new FileWriter(this.output, true)));
-            forEachImage(faceImageConsumer);
-            setDirectory(notFacesPhotosDirectory);
-            forEachImage(notFaceImageConsumer);
+            forEachImage(consumer);
         } catch (IOException e) {
             System.out.println("IOException in method run: " + e.getMessage());
         } finally {
@@ -134,24 +115,26 @@ public class FSUtil {
     public static void main(String[] args) {
         String cascade = "./src/main/resources/cascade.json";
 
-//        String facesPhotosDirectory = "./src/main/resources/photos/faces";
-//        String notFacesPhotosDirectory = "./src/main/resources/photos/notFaces";
-        String facesPhotosDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\faces";
-        String notFacesPhotosDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\notfaces";
+        String facesImagesDirectory = "./src/main/resources/photos/faces";
+        String notFacesImagesDirectory = "./src/main/resources/photos/notFaces";
 
-        String output = "./src/main/output.txt";
+        //String facesPhotosDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\faces";
+        //String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\notfaces";
+
+        String output = "./src/main/testOutput.txt";
 
         FSUtil util;
 
         try {
-            util = new FSUtil(facesPhotosDirectory, output, cascade);
-            util.run(notFacesPhotosDirectory);
+            util = new FSUtil(facesImagesDirectory, output, cascade);
+            util.run(ImageType.FACES);
+
+            util = new FSUtil(notFacesImagesDirectory, output, cascade);
+            util.run(ImageType.NOT_CLASSIFIED);
 
         } catch (IOException e) {
             System.out.println("IOException: cannot create file");
         }
-
     }
-
 }
 
