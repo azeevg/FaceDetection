@@ -4,16 +4,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Primitive {
+public class Region {
 
     private List<Point> vertexes;
 
-    public Primitive(@NotNull final Point v1, @NotNull final Point v2,
-                     @NotNull final Point v3, @NotNull final Point v4) {
+    public Region(@NotNull final Point v1, @NotNull final Point v2,
+                  @NotNull final Point v3, @NotNull final Point v4) {
         this.vertexes = Collections.unmodifiableList(Arrays.asList(v1, v2, v3, v4));
     }
 
-    public Primitive() {
+    public Region() {
         vertexes = null;
     }
 
@@ -21,7 +21,7 @@ public class Primitive {
         return vertexes;
     }
 
-    public Primitive scale(final int scaleCoefficient) {
+    public Region scale(final int scaleCoefficient) {
         Point[] newVertexes = new Point[4];
         List<Point> oldVertexes = getVertexes();
         int i = 0;
@@ -29,7 +29,7 @@ public class Primitive {
             newVertexes[i++] = Vector.multiply(p, scaleCoefficient).toPoint();
         }
 
-        return new Primitive(newVertexes[0], newVertexes[1], newVertexes[2], newVertexes[3]);
+        return new Region(newVertexes[0], newVertexes[1], newVertexes[2], newVertexes[3]);
     }
 
     public double getWidth() {
@@ -56,7 +56,7 @@ public class Primitive {
 
     @Override
     public String toString() {
-        String result = "Primitive{vertexes=";
+        String result = "Region{vertexes=";
         for (Point p : vertexes) {
             result += p.toString() + " ";
         }

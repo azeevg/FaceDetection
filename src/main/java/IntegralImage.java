@@ -17,8 +17,8 @@ public class IntegralImage {
                 matrixOfBrightness[i][j] = calculateBrightness(bufferedImage.getRGB(j, i));
             }
         }
-//        printMatrix(matrixOfBrightness);
-//        System.out.println("\n\n");
+        printMatrix(matrixOfBrightness);
+        System.out.println("\n\n");
         integralImage = matrixOfBrightness;
 
         for (int i = 0; i < bufferedImage.getHeight(); i++) {
@@ -32,7 +32,7 @@ public class IntegralImage {
             }
         }
 
-//        printMatrix(integralImage);
+        printMatrix(integralImage);
     }
 
     private static double calculateBrightness(final int rgb) {
@@ -44,9 +44,9 @@ public class IntegralImage {
         return integralImage[y][x];
     }
 
-    private double getBrightness(@NotNull final Primitive primitive, @NotNull final Vector shift) {
+    private double getBrightness(@NotNull final Region region, @NotNull final Vector shift) {
         // it works only with rectangles, which edges are parallel to the axes
-        List<Point> points = primitive.getVertexes();
+        List<Point> points = region.getVertexes();
 
         Point point = points.get(2);
         Double result = getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
@@ -56,24 +56,24 @@ public class IntegralImage {
         return result ;
     }
 
-    private double getTotalBrightness(@NotNull final Collection<Primitive> primitives, @NotNull final Vector shift) {
+    private double getTotalBrightness(@NotNull final Collection<Region> regions, @NotNull final Vector shift) {
         double result = 0;
 
-        for (Primitive p : primitives) {
+        for (Region p : regions) {
             result += handlePrimitive(p, shift);
         }
         return result;
     }
 
-    public double handleCascade(@NotNull final Cascade cascade, @NotNull final Vector shift) {
-        double white = getTotalBrightness(cascade.getWhitePrimitives(), shift);
-        double black = getTotalBrightness(cascade.getBlackPrimitives(), shift);
+    public double handleCascade(@NotNull final Feature feature, @NotNull final Vector shift) {
+        double white = getTotalBrightness(feature.getWhiteRegions(), shift);
+        double black = getTotalBrightness(feature.getBlackRegions(), shift);
 
         return white - black;
     }
 
-    private double handlePrimitive(@NotNull final Primitive primitive, @NotNull final Vector shift) {
-        return getBrightness(primitive, shift);
+    private double handlePrimitive(@NotNull final Region region, @NotNull final Vector shift) {
+        return getBrightness(region, shift);
     }
 
     public int getHeight() {

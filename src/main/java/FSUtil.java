@@ -4,9 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -26,7 +24,7 @@ public class FSUtil {
         }
     };
     private final File output;
-    private final List<Cascade> cascades;
+    private final List<Feature> features;
     private final File directory;
     private PrintWriter printWriter;
 
@@ -43,7 +41,7 @@ public class FSUtil {
             this.output.createNewFile();
         }
 
-        cascades = CascadeManager.readCascade(cascade);
+        features = FeatureManager.readCascade(cascade);
     }
 
     public void forEachImage(@NotNull final Consumer<BufferedImage> consumer) throws IOException {
@@ -69,31 +67,31 @@ public class FSUtil {
         final int scanningWindowSize = 100;
 
         IntegralImage integralImage = new IntegralImage(image);
-        Cascade scaledCascade;
+        Feature scaledFeature;
         String result = "";
 
-        for (Cascade cascade : cascades) {
-            scaledCascade = cascade.scale(scanningWindowSize);
-            result += handleCascade(scaledCascade, integralImage);
+        for (Feature feature : features) {
+            scaledFeature = feature.scale(scanningWindowSize);
+            result += handleCascade(scaledFeature, integralImage);
         }
 
         return result;
     }
 
-    private String handleCascade(@NotNull final Cascade scaledCascade, @NotNull final IntegralImage integralImage) {
+    private String handleCascade(@NotNull final Feature scaledFeature, @NotNull final IntegralImage integralImage) {
         String result = "";
         final int step = 5;
 
-        int cascadeWidth = (int) scaledCascade.getWidth();
-        int cascadeHeight = (int) scaledCascade.getHeight();
+        int cascadeWidth = (int) scaledFeature.getWidth();
+        int cascadeHeight = (int) scaledFeature.getHeight();
         //DecimalFormat format = new DecimalFormat("*.##");
 
         Vector shift;
         for (int i = 0; i < (integralImage.getHeight() - cascadeHeight) / step; i++) {
             for (int j = 0; j < (integralImage.getWidth() - cascadeWidth) / step; j++) {
                 shift = new Vector(j * step, i * step);
-//                result += integralImage.handleCascade(scaledCascade, shift) + " ";
-                result += String.format(Locale.ENGLISH, "%.2f", integralImage.handleCascade(scaledCascade, shift)) + " ";
+//                result += integralImage.handleCascade(scaledFeature, shift) + " ";
+                result += String.format(Locale.ENGLISH, "%.2f", integralImage.handleCascade(scaledFeature, shift)) + " ";
             }
         }
 
@@ -118,7 +116,7 @@ public class FSUtil {
     }
 
     public static void main(String[] args) {
-        String cascade = "./src/main/resources/cascade.json";
+        String cascade = "./src/main/resources/features.json";
 
         String facesImagesDirectory = "./src/main/resources/photos/faces";
         String notFacesImagesDirectory = "./src/main/resources/photos/notFaces";
@@ -131,8 +129,8 @@ public class FSUtil {
         FSUtil util;
 
         try {
-            util = new FSUtil(facesImagesDirectory, output, cascade);
-            util.run(ImageType.FACES);
+//            util = new FSUtil(facesImagesDirectory, output, cascade);
+//            util.run(ImageType.FACES);
 
             util = new FSUtil(notFacesImagesDirectory, output, cascade);
             util.run(ImageType.NOT_CLASSIFIED);

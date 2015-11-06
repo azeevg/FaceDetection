@@ -1,6 +1,6 @@
 [
   {
-    "whitePrimitives": [
+    "whiteRegions": [
       {
         "vertexes": [
           {
@@ -22,7 +22,7 @@
         ]
       }
     ],
-    "blackPrimitives": [
+    "blackRegions": [
       {
         "vertexes": [
           {
@@ -46,7 +46,145 @@
     ]
   },
   {
-    "whitePrimitives": [
+    "whiteRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.25
+          },
+          {
+            "x": 0.8,
+            "y": 0.25
+          },
+          {
+            "x": 0.8,
+            "y": 0.5
+          },
+          {
+            "x": 0.0,
+            "y": 0.5
+          }
+        ]
+      }
+    ],
+    "blackRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.8,
+            "y": 0.0
+          },
+          {
+            "x": 0.8,
+            "y": 0.25
+          },
+          {
+            "x": 0.0,
+            "y": 0.25
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "whiteRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.25,
+            "y": 0.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.8
+          },
+          {
+            "x": 0.25,
+            "y": 0.8
+          }
+        ]
+      }
+    ],
+    "blackRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.25,
+            "y": 0.0
+          },
+          {
+            "x": 0.25,
+            "y": 0.8
+          },
+          {
+            "x": 0.0,
+            "y": 0.8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "whiteRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.25,
+            "y": 0.0
+          },
+          {
+            "x": 0.25,
+            "y": 0.8
+          },
+          {
+            "x": 0.0,
+            "y": 0.8
+          }
+        ]
+      }
+    ],
+    "blackRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.25,
+            "y": 0.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.8
+          },
+          {
+            "x": 0.25,
+            "y": 0.8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "whiteRegions": [
       {
         "vertexes": [
           {
@@ -88,7 +226,7 @@
         ]
       }
     ],
-    "blackPrimitives": [
+    "blackRegions": [
       {
         "vertexes": [
           {
@@ -132,7 +270,7 @@
     ]
   },
   {
-    "whitePrimitives": [
+    "whiteRegions": [
       {
         "vertexes": [
           {
@@ -174,7 +312,7 @@
         ]
       }
     ],
-    "blackPrimitives": [
+    "blackRegions": [
       {
         "vertexes": [
           {
@@ -198,7 +336,73 @@
     ]
   },
   {
-    "whitePrimitives": [
+    "whiteRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "x": 0.25,
+            "y": 0.0
+          },
+          {
+            "x": 0.25,
+            "y": 0.25
+          },
+          {
+            "x": 0.0,
+            "y": 0.25
+          }
+        ]
+      },
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.5
+          },
+          {
+            "x": 0.25,
+            "y": 0.5
+          },
+          {
+            "x": 0.25,
+            "y": 0.75
+          },
+          {
+            "x": 0.0,
+            "y": 0.75
+          }
+        ]
+      }
+    ],
+    "blackRegions": [
+      {
+        "vertexes": [
+          {
+            "x": 0.0,
+            "y": 0.25
+          },
+          {
+            "x": 0.25,
+            "y": 0.25
+          },
+          {
+            "x": 0.25,
+            "y": 0.5
+          },
+          {
+            "x": 0.0,
+            "y": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "whiteRegions": [
       {
         "vertexes": [
           {
@@ -280,7 +484,7 @@
         ]
       }
     ],
-    "blackPrimitives": [
+    "blackRegions": [
       {
         "vertexes": [
           {
