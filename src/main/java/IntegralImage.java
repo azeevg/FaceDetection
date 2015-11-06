@@ -17,8 +17,8 @@ public class IntegralImage {
                 matrixOfBrightness[i][j] = calculateBrightness(bufferedImage.getRGB(j, i));
             }
         }
-        printMatrix(matrixOfBrightness);
-        System.out.println("\n\n");
+//        printMatrix(matrixOfBrightness);
+//        System.out.println("\n\n");
         integralImage = matrixOfBrightness;
 
         for (int i = 0; i < bufferedImage.getHeight(); i++) {
@@ -32,7 +32,7 @@ public class IntegralImage {
             }
         }
 
-        printMatrix(integralImage);
+//        printMatrix(integralImage);
     }
 
     private static double calculateBrightness(final int rgb) {
