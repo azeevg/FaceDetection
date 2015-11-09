@@ -1,9 +1,11 @@
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -27,8 +29,10 @@ public class FSUtil {
     private final List<Feature> features;
     private final File directory;
     private PrintWriter printWriter;
+    private int imageId = 0;
 
-    public FSUtil(@NotNull final String directory, @NotNull final String output, @NotNull final String cascade) throws IOException {
+
+    public FSUtil(@NotNull final String directory, @NotNull final String output, @Nullable final String cascade) throws IOException {
         this.directory = new File(directory);
 
         if (!this.directory.isDirectory()) {
@@ -41,7 +45,35 @@ public class FSUtil {
             this.output.createNewFile();
         }
 
-        features = FeatureManager.readCascade(cascade);
+        if (cascade != null)
+            features = FeatureManager.readCascade(cascade);
+        else
+            features = null;
+    }
+
+    public static void main(String[] args) {
+        String cascade = "./src/main/resources/features.json";
+
+//        String facesImagesDirectory = "./src/main/resources/photos/faces";
+//        String notFacesImagesDirectory = "./src/main/resources/photos/notFaces";
+
+        String facesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\faces";
+        String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\notfaces";
+
+        String output = "./src/main/Output.fv";
+
+        FSUtil util;
+
+        try {
+            util = new FSUtil(facesImagesDirectory, output, cascade);
+            util.run(ImageType.FACES);
+
+            util = new FSUtil(notFacesImagesDirectory, output, cascade);
+            util.run(ImageType.NOT_CLASSIFIED);
+
+        } catch (IOException e) {
+            System.out.println("IOException: cannot create file");
+        }
     }
 
     public void forEachImage(@NotNull final Consumer<BufferedImage> consumer) throws IOException {
@@ -115,30 +147,26 @@ public class FSUtil {
         }
     }
 
-    public static void main(String[] args) {
-        String cascade = "./src/main/resources/features.json";
+    public void replaceFiles(@NotNull final ImageType imageType) throws IOException {
+        replace(directory, output, imageType);
+        imageId = 0;
+    }
 
-        String facesImagesDirectory = "./src/main/resources/photos/faces";
-        String notFacesImagesDirectory = "./src/main/resources/photos/notFaces";
-
-        //String facesPhotosDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\faces";
-        //String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\notfaces";
-
-        String output = "./src/main/testOutput.txt";
-
-        FSUtil util;
-
-        try {
-//            util = new FSUtil(facesImagesDirectory, output, cascade);
-//            util.run(ImageType.FACES);
-
-            util = new FSUtil(notFacesImagesDirectory, output, cascade);
-            util.run(ImageType.NOT_CLASSIFIED);
-
-        } catch (IOException e) {
-            System.out.println("IOException: cannot create file");
+    private void replace(@NotNull final File filepath, @NotNull final File output, @NotNull final ImageType imageType) throws IOException {
+        if (filepath.isDirectory()) {
+            for (File f : filepath.listFiles(fileFilter)) {
+                replace(f, output, imageType);
+            }
+        } else {
+            String newPath = output.getAbsolutePath() +
+                    File.separator + imageType.name().toLowerCase() +
+                    imageId++ + FilenameUtils.getExtension(filepath.getName());
+            Files.copy(filepath.toPath(), new File(newPath).toPath());
         }
     }
+
+
+
 
 }
 
