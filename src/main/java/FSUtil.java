@@ -41,14 +41,17 @@ public class FSUtil {
 
         this.output = new File(output);
 
-        if (!this.output.exists()) {
-            this.output.createNewFile();
-        }
-
-        if (cascade != null)
+        if (cascade != null) {
             features = FeatureManager.readCascade(cascade);
-        else
+            if (!this.output.exists()) {
+                this.output.createNewFile();
+            }
+        } else {
             features = null;
+            if (!this.output.exists()) {
+                this.output.mkdir();
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -57,19 +60,28 @@ public class FSUtil {
 //        String facesImagesDirectory = "./src/main/resources/photos/faces";
 //        String notFacesImagesDirectory = "./src/main/resources/photos/notFaces";
 
-        String facesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\faces";
-        String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\notfaces";
-
-        String output = "./src/main/Output.fv";
+        String output = "./src/main/output.fv";
+        String facesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\adjustedFaces";
+        String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\adjustedObjects";
 
         FSUtil util;
 
         try {
             util = new FSUtil(facesImagesDirectory, output, cascade);
-            util.run(ImageType.FACES);
+            util.writeFeatureVectors(ImageType.FACES);
 
             util = new FSUtil(notFacesImagesDirectory, output, cascade);
-            util.run(ImageType.NOT_CLASSIFIED);
+            util.writeFeatureVectors(ImageType.NOT_CLASSIFIED);
+
+//            int height = 200;
+//            int width = 200;
+//
+//            util = new FSUtil(facesImagesDirectory, outputFaces, null);
+//            util.adjustImages(ImageType.FACES, height, width);
+
+
+//            util = new FSUtil(notFacesImagesDirectory, outputObjects, null);
+//            util.adjustImages(ImageType.NOT_CLASSIFIED, height, width);
 
         } catch (IOException e) {
             System.out.println("IOException: cannot create file");
@@ -134,28 +146,28 @@ public class FSUtil {
         printWriter.println(featureVector);
     }
 
-    private void run(@NotNull final ImageType imageType) {
+    private void writeFeatureVectors(@NotNull final ImageType imageType) {
         Consumer<BufferedImage> consumer = img -> writeFeatureVector(img, imageType);
 
         try {
             printWriter = new PrintWriter(new BufferedWriter(new FileWriter(this.output, true)));
             forEachImage(consumer);
         } catch (IOException e) {
-            System.out.println("IOException in method run: " + e.getMessage());
+            System.out.println("IOException in method writeFeatureVectors: " + e.getMessage());
         } finally {
             printWriter.close();
         }
     }
 
     public void replaceFiles(@NotNull final ImageType imageType) throws IOException {
-        replace(directory, output, imageType);
+        replaceFile(directory, output, imageType);
         imageId = 0;
     }
 
-    private void replace(@NotNull final File filepath, @NotNull final File output, @NotNull final ImageType imageType) throws IOException {
+    private void replaceFile(@NotNull final File filepath, @NotNull final File output, @NotNull final ImageType imageType) throws IOException {
         if (filepath.isDirectory()) {
             for (File f : filepath.listFiles(fileFilter)) {
-                replace(f, output, imageType);
+                replaceFile(f, output, imageType);
             }
         } else {
             String newPath = output.getAbsolutePath() +
@@ -165,8 +177,64 @@ public class FSUtil {
         }
     }
 
+    public void adjustImages(@NotNull final ImageType imageType, final int height, final int width) throws IllegalArgumentException {
 
+        if (height <= 0 || width <= 0)
+            throw new IllegalArgumentException();
 
+        imageId = 0;
+        String templatePath = output.getPath() + File.separator + imageType.name().toLowerCase();
+        Consumer<BufferedImage> consumer = img -> {
+            try {
+                adjustImage(img, templatePath, height, width);
+            } catch (IOException e) {
+                System.out.println("IOException in adjustImage(): " + e.getMessage());
+            }
+        };
 
+        try {
+            forEachImage(consumer);
+        } catch (IOException e) {
+            System.out.println("IOException in adjust(...): " + e.getMessage());
+        }
+    }
+
+    private void adjustImage(@NotNull final BufferedImage img, @NotNull final String templatePath, final int height, final int width) throws IOException {
+
+        final int WHITE = -1;
+
+        // check if file with such name is already exists
+        File newFile;
+        do {
+            newFile = new File(templatePath + imageId++ + ".jpg");
+        } while (newFile.exists());
+
+        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        final int offsetX;
+        final int offsetY;
+
+        if (width > img.getWidth())
+            offsetX = 0;
+        else
+            offsetX = (img.getWidth() - width) / 2;
+
+        if (height > img.getHeight())
+            offsetY = 0;
+        else
+            offsetY = (img.getHeight() - height) / 2;
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (offsetY + i < img.getHeight() && offsetX + j < img.getWidth())
+                    newImage.setRGB(j, i, img.getRGB(offsetX + j, offsetY + i));
+                else
+                    newImage.setRGB(j, i, WHITE);
+            }
+        }
+
+        newFile.createNewFile();
+        ImageIO.write(newImage, "jpg", newFile);
+    }
 }
 
