@@ -1,3 +1,4 @@
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -6,15 +7,22 @@ import java.util.List;
 
 public class Region {
 
-    private List<Point> vertexes;
+    private final List<Point> vertexes;
+    private final double width; //wtf rly double?
+    private final double height;
+
+    public Region(@JsonProperty("vertexes") final List<Point> vertexes) {
+        this.vertexes = Collections.unmodifiableList(vertexes);
+        if (this.vertexes.size() != 4) {
+            throw new IllegalArgumentException("4 poits were expected");
+        }
+        this.width = Utils.getMaxDimension(this.vertexes, Point::getX);
+        this.height = Utils.getMaxDimension(this.vertexes, Point::getY);
+    }
 
     public Region(@NotNull final Point v1, @NotNull final Point v2,
                   @NotNull final Point v3, @NotNull final Point v4) {
-        this.vertexes = Collections.unmodifiableList(Arrays.asList(v1, v2, v3, v4));
-    }
-
-    public Region() {
-        vertexes = null;
+        this(Arrays.asList(v1, v2, v3, v4));
     }
 
     public List<Point> getVertexes() {
@@ -22,10 +30,10 @@ public class Region {
     }
 
     public Region scale(final int scaleCoefficient) {
-        Point[] newVertexes = new Point[4];
-        List<Point> oldVertexes = getVertexes();
+        final Point[] newVertexes = new Point[4];
+        final List<Point> oldVertexes = getVertexes();
         int i = 0;
-        for (Point p : oldVertexes) {
+        for (final Point p : oldVertexes) {
             newVertexes[i++] = Vector.multiply(p, scaleCoefficient).toPoint();
         }
 
@@ -33,25 +41,11 @@ public class Region {
     }
 
     public double getWidth() {
-        double max = 0.0;
-
-        for (Point p : vertexes) {
-            if (p.getX() > max)
-                max = p.getX();
-        }
-
-        return max;
+        return this.width;
     }
 
     public double getHeight() {
-        double max = 0.0;
-
-        for (Point p : vertexes) {
-            if (p.getY() > max)
-                max = p.getY();
-        }
-
-        return max;
+        return this.height;
     }
 
     @Override
@@ -62,4 +56,6 @@ public class Region {
         }
         return result + "}";
     }
+
+
 }

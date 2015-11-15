@@ -1,9 +1,11 @@
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class Point extends Vector {
     public Point() {
         super();
     }
 
-    public Point(final double x, final double y) {
+    public Point(@JsonProperty("x") final double x, @JsonProperty("y")final double y) {
         super(x, y);
     }
 

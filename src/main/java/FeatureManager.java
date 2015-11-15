@@ -4,18 +4,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class FeatureManager {
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public static List<Feature> readCascade(@NotNull final String source) throws IOException {
-        List<Feature> features = mapper.readValue(new File(source), new TypeReference<List<Feature>>() {
-        });
-        return features;
+    public static List<Feature> readCascade(@NotNull final InputStream in) throws IOException {
+        return MAPPER.readValue(in, new TypeReference<List<Feature>>() {});
     }
 
     public static void writeCascade(@NotNull final String dest, @NotNull final List<Feature> feature) throws IOException {
-        mapper.writeValue(new File(dest), feature);
+        MAPPER.writeValue(new File(dest), feature);
     }
 }

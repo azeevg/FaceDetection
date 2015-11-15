@@ -17,8 +17,7 @@ public class IntegralImage {
                 matrixOfBrightness[i][j] = calculateBrightness(bufferedImage.getRGB(j, i));
             }
         }
-//        printMatrix(matrixOfBrightness);
-//        System.out.println("\n\n");
+
         integralImage = matrixOfBrightness;
 
         for (int i = 0; i < bufferedImage.getHeight(); i++) {
@@ -31,12 +30,10 @@ public class IntegralImage {
                     integralImage[i][j] -= integralImage[i - 1][j - 1];
             }
         }
-
-//        printMatrix(integralImage);
     }
 
     private static double calculateBrightness(final int rgb) {
-        Color color = new Color(rgb);
+        final Color color = new Color(rgb);
         return (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255.0;
     }
 
@@ -46,7 +43,7 @@ public class IntegralImage {
 
     private double getBrightness(@NotNull final Region region, @NotNull final Vector shift) {
         // it works only with rectangles, which edges are parallel to the axes
-        List<Point> points = region.getVertexes();
+        final List<Point> points = region.getVertexes();
 
         Point point = points.get(2);
         Double result = getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
@@ -57,12 +54,7 @@ public class IntegralImage {
     }
 
     private double getTotalBrightness(@NotNull final Collection<Region> regions, @NotNull final Vector shift) {
-        double result = 0;
-
-        for (Region p : regions) {
-            result += handlePrimitive(p, shift);
-        }
-        return result;
+        return regions.stream().mapToDouble(p -> handlePrimitive(p, shift)).sum();
     }
 
     public double handleCascade(@NotNull final Feature feature, @NotNull final Vector shift) {

@@ -1,82 +1,53 @@
-import java.util.ArrayList;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Feature {
-    private Double width = null;
-    private Double height = null;
+    private final double width;
+    private final double height;
 
     private Collection<Region> whiteRegions;
     private Collection<Region> blackRegions;
 
-    public Feature(Collection<Region> whiteRegions, Collection<Region> blackRegions) {
+    // we have only few scale coefficients, so lets cahe features instead of calculationg them on each iteration!
+    private final Map<Integer, Feature> cache = new HashMap<>();
+
+    public Feature(
+        @JsonProperty("whiteRegions") final Collection<Region> whiteRegions,
+        @JsonProperty("blackRegions") final Collection<Region> blackRegions) {
         this.whiteRegions = whiteRegions;
         this.blackRegions = blackRegions;
-    }
-
-    public Feature() {
+        this.width = Math.max(
+            Utils.getMaxDimension(whiteRegions, Region::getWidth),
+            Utils.getMaxDimension(blackRegions, Region::getWidth)
+        );
+        this.height = Math.max(
+            Utils.getMaxDimension(whiteRegions, Region::getHeight),
+            Utils.getMaxDimension(blackRegions, Region::getHeight)
+        );
     }
 
     public Collection<Region> getWhiteRegions() {
-        return whiteRegions;
+        return Collections.unmodifiableCollection(whiteRegions);
     }
 
-    public void setWhiteRegions(Collection<Region> whiteRegions) {
-        this.whiteRegions = whiteRegions;
-    }
 
     public Collection<Region> getBlackRegions() {
-        return blackRegions;
+        return Collections.unmodifiableCollection(blackRegions);
     }
 
-    public void setBlackRegions(Collection<Region> blackRegions) {
-        this.blackRegions = blackRegions;
-    }
 
     public double getWidth() {
-
-        if (this.width == null) {
-            double max = 0.0;
-            double width;
-
-            for (Region p : whiteRegions) {
-                width = p.getWidth();
-                if (width > max)
-                    max = width;
-            }
-            for (Region p : blackRegions) {
-                width = p.getWidth();
-                if (width > max)
-                    max = width;
-            }
-
-            this.width = max;
-        }
-
         return this.width;
     }
 
     public double getHeight() {
-
-        if (height == null) {
-            double max = 0.0;
-            double height;
-
-            for (Region p : whiteRegions) {
-                height = p.getHeight();
-                if (height > max)
-                    max = height;
-            }
-            for (Region p : blackRegions) {
-                height = p.getHeight();
-                if (height > max)
-                    max = height;
-            }
-
-            this.height = max;
-        }
         return this.height;
     }
-
 
     public Feature scale(final int scaleCoefficient) throws IllegalArgumentException {
         /*
@@ -86,19 +57,12 @@ public class Feature {
             throw new IllegalArgumentException();
         }
 
-        Collection<Region> white = new ArrayList<Region>();
-        for (Region p : getWhiteRegions()) {
-            white.add(p.scale(scaleCoefficient));
-        }
+        cache.putIfAbsent(scaleCoefficient, new Feature(
+            whiteRegions.stream().map(r -> r.scale(scaleCoefficient)).collect(Collectors.toList()),
+            blackRegions.stream().map(r -> r.scale(scaleCoefficient)).collect(Collectors.toList())
+        ));
 
-        Collection<Region> black = new ArrayList<Region>();
-        for (Region p : getBlackRegions()) {
-            black.add(p.scale(scaleCoefficient));
-        }
-
-        Feature newFeature = new Feature(white, black);
-
-        return newFeature;
+        return cache.get(scaleCoefficient);
     }
 
 
@@ -109,4 +73,5 @@ public class Feature {
                 ", blackRegions=" + blackRegions +
                 '}';
     }
+
 }
