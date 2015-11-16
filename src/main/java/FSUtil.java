@@ -2,12 +2,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 
 public final class FSUtil {
+    private static final int IMAGE_HEIGHT = 200;
+    private static final int IMAGE_WIDTH = 200;
     private static final int SCANNING_WINDOW_SIZE = 60;
     private static final int STEP = SCANNING_WINDOW_SIZE / 3;
     private static final String DELIMITER = "\t";
@@ -26,7 +30,6 @@ public final class FSUtil {
     private int imageId = 0;
 
 
-    //Q: почеу cascade может быть null?
     public FSUtil(@NotNull final String directory, @NotNull final InputStream cascade) throws IOException {
         this.directory = new File(directory);
 
@@ -40,25 +43,25 @@ public final class FSUtil {
     public static void main(String[] args) throws IOException {
         final String cascade = "./src/main/resources/features.json";
 
-//        String facesImagesDirectory = "./src/main/resources/photos/faces";
-//        String notFacesImagesDirectory = "./src/main/resources/photos/notFaces";
-
-        final String output = "./src/main/output.fv";
-//        final String facesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\adjustedFaces";
-        final String facesImagesDirectory = "/Users/vkokarev/studenst/FaceDetection/dataset/faces";
-        final String notFacesImagesDirectory = "/Users/vkokarev/studenst/FaceDetection/dataset/objects";
-//        final String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\adjustedObjects";
+        final String facesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\adjustedFaces";
+        final String notFacesImagesDirectory = "C:\\Users\\GlAz\\Desktop\\faceDetection\\adjustedObjects";
+//        final String destination = "C:\\Users\\GlAz\\Desktop\\faceDetection\\notfaces";
+        final String output = "./src/main/resources/output.fv";
 
         FSUtil util;
+//
+//        util = new FSUtil(destination, FSUtil.class.getResourceAsStream("features.json"));
+//        util.adjustImages(ImageType.NOT_CLASSIFIED, notFacesImagesDirectory, IMAGE_WIDTH, IMAGE_HEIGHT, true);
 
         try(final PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(output, false)))) {
-            //по хорошему - надо закрыть стрим
             util = new FSUtil(facesImagesDirectory, FSUtil.class.getResourceAsStream("features.json"));
             util.writeFeatureVectors(pw, ImageType.FACES);
 
             util = new FSUtil(notFacesImagesDirectory, FSUtil.class.getResourceAsStream("features.json"));
             util.writeFeatureVectors(pw, ImageType.NOT_CLASSIFIED);
         }
+
+
     }
 
     public void forEachImage(@NotNull final Consumer<BufferedImage> consumer) throws IOException {
@@ -81,10 +84,10 @@ public final class FSUtil {
         final IntegralImage integralImage = new IntegralImage(image);
         final List<Double> result = new ArrayList<>();
         features
-            .stream()
-            .map(f -> f.scale(SCANNING_WINDOW_SIZE))
-            .map(f -> handleCascade(f, integralImage))
-            .forEach(result::addAll);
+                .stream()
+                .map(f -> f.scale(SCANNING_WINDOW_SIZE))
+                .map(f -> handleCascade(f, integralImage))
+                .forEach(result::addAll);
         return result;
     }
 
@@ -107,7 +110,6 @@ public final class FSUtil {
             forEachImage(img -> writeFeatureVector(pw, img, imageType));
         } catch (IOException e) {
             System.out.println("IOException in method writeFeatureVectors: " + e.getMessage());
-            //лучше гордо умереть, чем стыдливо такое замолчать
             throw new RuntimeException("can't continue execution due to fatal error", e);
         }
     }
@@ -130,64 +132,82 @@ public final class FSUtil {
 //        }
 //    }
 
-//    public void adjustImages(@NotNull final ImageType imageType, final int height, final int width) throws IllegalArgumentException {
-//
-//        if (height <= 0 || width <= 0)
-//            throw new IllegalArgumentException();
-//
-//        imageId = 0;
-//        String templatePath = output.getPath() + File.separator + imageType.name().toLowerCase();
-//        Consumer<BufferedImage> consumer = img -> {
-//            try {
-//                adjustImage(img, templatePath, height, width);
-//            } catch (IOException e) {
-//                System.out.println("IOException in adjustImage(): " + e.getMessage());
-//            }
-//        };
-//
-//        try {
-//            forEachImage(consumer);
-//        } catch (IOException e) {
-//            System.out.println("IOException in adjust(...): " + e.getMessage());
-//        }
-//    }
+    public void adjustImages(@NotNull final ImageType imageType, @NotNull final String output, final int width, final int height, final boolean isScalingRequired) throws IllegalArgumentException {
 
-//    private void adjustImage(@NotNull final BufferedImage img, @NotNull final String templatePath, final int height, final int width) throws IOException {
-//
-//        final int WHITE = -1;
-//
-//        // check if file with such name is already exists
-//        File newFile;
-//        do {
-//            newFile = new File(templatePath + imageId++ + ".jpg");
-//        } while (newFile.exists());
-//
-//        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//
-//        final int offsetX;
-//        final int offsetY;
-//
-//        if (width > img.getWidth())
-//            offsetX = 0;
-//        else
-//            offsetX = (img.getWidth() - width) / 2;
-//
-//        if (height > img.getHeight())
-//            offsetY = 0;
-//        else
-//            offsetY = (img.getHeight() - height) / 2;
-//
-//        for (int i = 0; i < height; i++) {
-//            for (int j = 0; j < width; j++) {
-//                if (offsetY + i < img.getHeight() && offsetX + j < img.getWidth())
-//                    newImage.setRGB(j, i, img.getRGB(offsetX + j, offsetY + i));
-//                else
-//                    newImage.setRGB(j, i, WHITE);
-//            }
-//        }
-//
-//        newFile.createNewFile();
-//        ImageIO.write(newImage, "jpg", newFile);
-//    }
+        if (height <= 0 || width <= 0)
+            throw new IllegalArgumentException();
+
+        File outputDirectory = new File(output);
+        if (!outputDirectory.exists() || !outputDirectory.isDirectory()) {
+            outputDirectory.mkdir();
+        }
+
+        imageId = 0;
+
+        Consumer<BufferedImage> consumer = img -> {
+            try {
+                String templatePath = output + File.separator + imageType.name().toLowerCase();
+
+                if (isScalingRequired) {
+                    BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+                    Graphics g = newImage.createGraphics();
+                    g.drawImage(img, 0, 0, width, height, null);
+                    g.dispose();
+
+                    adjustImage(newImage, templatePath, height, width);
+
+                } else {
+                    adjustImage(img, templatePath, height, width);
+                }
+            } catch (IOException e) {
+                System.out.println("IOException in adjustImage(): " + e.getMessage());
+            }
+        };
+
+        try {
+            forEachImage(consumer);
+        } catch (IOException e) {
+            System.out.println("IOException in adjust(...): " + e.getMessage());
+        }
+    }
+
+    private void adjustImage(@NotNull final BufferedImage img, @NotNull final String templatePath, final int height, final int width) throws IOException {
+
+        final int WHITE = -1;
+
+        // check if file with such name is already exists
+        File newFile;
+        do {
+            newFile = new File(templatePath + imageId++ + ".jpg");
+        } while (newFile.exists());
+
+        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        final int offsetX;
+        final int offsetY;
+
+        if (width > img.getWidth())
+            offsetX = 0;
+        else
+            offsetX = (img.getWidth() - width) / 2;
+
+        if (height > img.getHeight())
+            offsetY = 0;
+        else
+            offsetY = (img.getHeight() - height) / 2;
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (offsetY + i < img.getHeight() && offsetX + j < img.getWidth())
+                    newImage.setRGB(j, i, img.getRGB(offsetX + j, offsetY + i));
+                else
+                    newImage.setRGB(j, i, WHITE);
+            }
+        }
+
+        newFile.createNewFile();
+        ImageIO.write(newImage, "jpg", newFile);
+    }
 }
 

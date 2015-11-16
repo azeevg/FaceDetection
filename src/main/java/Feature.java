@@ -13,7 +13,7 @@ public class Feature {
     private Collection<Region> whiteRegions;
     private Collection<Region> blackRegions;
 
-    // we have only few scale coefficients, so lets cahe features instead of calculationg them on each iteration!
+    // we have only few scale coefficients, so lets cache features instead of calculating them on each iteration!
     private final Map<Integer, Feature> cache = new HashMap<>();
 
     public Feature(

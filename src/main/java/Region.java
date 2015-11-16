@@ -8,13 +8,13 @@ import java.util.List;
 public class Region {
 
     private final List<Point> vertexes;
-    private final double width; //wtf rly double?
+    private final double width;
     private final double height;
 
     public Region(@JsonProperty("vertexes") final List<Point> vertexes) {
         this.vertexes = Collections.unmodifiableList(vertexes);
         if (this.vertexes.size() != 4) {
-            throw new IllegalArgumentException("4 poits were expected");
+            throw new IllegalArgumentException("4 points were expected");
         }
         this.width = Utils.getMaxDimension(this.vertexes, Point::getX);
         this.height = Utils.getMaxDimension(this.vertexes, Point::getY);
