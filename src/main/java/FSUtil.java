@@ -13,7 +13,7 @@ public final class FSUtil {
     private static final int IMAGE_HEIGHT = 200;
     private static final int IMAGE_WIDTH = 200;
     private static final int SCANNING_WINDOW_SIZE = 60;
-    private static final int STEP = SCANNING_WINDOW_SIZE / 3;
+    //private static final int STEP = SCANNING_WINDOW_SIZE / 3;
     private static final String DELIMITER = "\t";
 
     private static FileFilter fileFilter = new FileFilter() {
@@ -76,22 +76,26 @@ public final class FSUtil {
         joiner.add("" + imageType.getNumber()); //fastest way to convert number->string
         joiner.add(""); //uri
         joiner.add("1"); //group
-        getFeatureVector(image).forEach(d -> joiner.add(String.format(Locale.ENGLISH, "%.2f", d)));
+        new FeatureHandler(features, SCANNING_WINDOW_SIZE)
+                .getFeatureVector(image).
+                forEach(d -> joiner.add(String.format(Locale.ENGLISH, "%.2f", d)));
+
         pw.println(joiner.toString());
     }
 
+    /*
     private List<Double> getFeatureVector(@NotNull final BufferedImage image) {
         final IntegralImage integralImage = new IntegralImage(image);
         final List<Double> result = new ArrayList<>();
         features
                 .stream()
                 .map(f -> f.scale(SCANNING_WINDOW_SIZE))
-                .map(f -> handleCascade(f, integralImage))
+                .map(f -> handleFeature(f, integralImage))
                 .forEach(result::addAll);
         return result;
     }
 
-    private List<Double> handleCascade(@NotNull final Feature scaledFeature, @NotNull final IntegralImage integralImage) {
+    private List<Double> handleFeature(@NotNull final Feature scaledFeature, @NotNull final IntegralImage integralImage) {
         final List<Double> result = new ArrayList<>();
         final int cascadeWidth = (int) scaledFeature.getWidth();
         final int cascadeHeight = (int) scaledFeature.getHeight();
@@ -104,6 +108,7 @@ public final class FSUtil {
         }
         return result;
     }
+    */
 
     private void writeFeatureVectors(@NotNull final PrintWriter pw, @NotNull final ImageType imageType) {
         try {
