@@ -9,25 +9,23 @@ import java.util.stream.Collectors;
 public class Feature {
     private final double width;
     private final double height;
-
+    // we have only few scale coefficients, so lets cache features instead of calculating them on each iteration!
+    private final Map<Integer, Feature> cache = new HashMap<>();
     private Collection<Region> whiteRegions;
     private Collection<Region> blackRegions;
 
-    // we have only few scale coefficients, so lets cache features instead of calculating them on each iteration!
-    private final Map<Integer, Feature> cache = new HashMap<>();
-
     public Feature(
-        @JsonProperty("whiteRegions") final Collection<Region> whiteRegions,
-        @JsonProperty("blackRegions") final Collection<Region> blackRegions) {
+            @JsonProperty("whiteRegions") final Collection<Region> whiteRegions,
+            @JsonProperty("blackRegions") final Collection<Region> blackRegions) {
         this.whiteRegions = whiteRegions;
         this.blackRegions = blackRegions;
         this.width = Math.max(
-            Utils.getMaxDimension(whiteRegions, Region::getWidth),
-            Utils.getMaxDimension(blackRegions, Region::getWidth)
+                Utils.getMaxDimension(whiteRegions, Region::getWidth),
+                Utils.getMaxDimension(blackRegions, Region::getWidth)
         );
         this.height = Math.max(
-            Utils.getMaxDimension(whiteRegions, Region::getHeight),
-            Utils.getMaxDimension(blackRegions, Region::getHeight)
+                Utils.getMaxDimension(whiteRegions, Region::getHeight),
+                Utils.getMaxDimension(blackRegions, Region::getHeight)
         );
     }
 
@@ -58,8 +56,8 @@ public class Feature {
         }
 
         cache.putIfAbsent(scaleCoefficient, new Feature(
-            whiteRegions.stream().map(r -> r.scale(scaleCoefficient)).collect(Collectors.toList()),
-            blackRegions.stream().map(r -> r.scale(scaleCoefficient)).collect(Collectors.toList())
+                whiteRegions.stream().map(r -> r.scale(scaleCoefficient)).collect(Collectors.toList()),
+                blackRegions.stream().map(r -> r.scale(scaleCoefficient)).collect(Collectors.toList())
         ));
 
         return cache.get(scaleCoefficient);

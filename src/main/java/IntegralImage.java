@@ -50,7 +50,7 @@ public class IntegralImage {
         point = points.get(0);
         result -= getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
 
-        return result ;
+        return result;
     }
 
     private double getTotalBrightness(@NotNull final Collection<Region> regions, @NotNull final Vector shift) {

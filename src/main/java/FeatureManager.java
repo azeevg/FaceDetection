@@ -11,7 +11,8 @@ public class FeatureManager {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static List<Feature> readCascade(@NotNull final InputStream in) throws IOException {
-        return MAPPER.readValue(in, new TypeReference<List<Feature>>() {});
+        return MAPPER.readValue(in, new TypeReference<List<Feature>>() {
+        });
     }
 
     public static void writeCascade(@NotNull final String dest, @NotNull final List<Feature> feature) throws IOException {

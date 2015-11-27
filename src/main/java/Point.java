@@ -5,7 +5,7 @@ public class Point extends Vector {
         super();
     }
 
-    public Point(@JsonProperty("x") final double x, @JsonProperty("y")final double y) {
+    public Point(@JsonProperty("x") final double x, @JsonProperty("y") final double y) {
         super(x, y);
     }
 
