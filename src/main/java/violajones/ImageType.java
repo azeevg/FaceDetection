@@ -1,3 +1,5 @@
+package violajones;
+
 public enum ImageType {
     NOT_CLASSIFIED(0),
     FACES(1);

@@ -1,5 +1,8 @@
+package violajones;
+
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
+import violajones.visualizer.Frame;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

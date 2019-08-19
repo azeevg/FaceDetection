@@ -1,3 +1,6 @@
+package violajones.visualizer;
+
+import violajones.common.Point;
 import org.jetbrains.annotations.NotNull;
 
 public class Frame {

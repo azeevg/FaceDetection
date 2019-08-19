@@ -1,3 +1,5 @@
+package violajones;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.jetbrains.annotations.NotNull;

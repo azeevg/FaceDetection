@@ -1,4 +1,8 @@
+package violajones;
+
+import violajones.common.Vector;
 import org.jetbrains.annotations.NotNull;
+import violajones.visualizer.Frame;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ public class FeatureHandler {
         final List<Double> result = new ArrayList<>();
         features
                 .stream()
+                .parallel()
                 .map(f -> f.scale(featureWindowSize))
                 .map(f -> handleFeature(f, integralImage, scanningWindow))
                 .forEach(result::addAll);

@@ -1,3 +1,5 @@
+package violajones.common;
+
 import org.jetbrains.annotations.NotNull;
 
 public class Vector {
@@ -36,7 +38,7 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "Vector{" +
+        return "violajones.common.Vector{" +
                 "x=" + x +
                 ", y=" + y +
                 '}';

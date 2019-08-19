@@ -1,3 +1,5 @@
+package violajones;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.Collection;

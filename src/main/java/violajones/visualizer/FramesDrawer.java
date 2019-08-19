@@ -1,10 +1,15 @@
-import org.jetbrains.annotations.NotNull;
+package violajones.visualizer;
 
-import javax.imageio.ImageIO;
+import org.jetbrains.annotations.NotNull;
+import violajones.Feature;
+import violajones.FeatureHandler;
+import violajones.Oracle;
+import violajones.Utils;
+import violajones.common.Point;
+
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

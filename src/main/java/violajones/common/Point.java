@@ -1,3 +1,5 @@
+package violajones.common;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Point extends Vector {
@@ -11,7 +13,7 @@ public class Point extends Vector {
 
     @Override
     public String toString() {
-        return "Point{" +
+        return "violajones.common.Point{" +
                 "x=" + getX() +
                 ", y=" + getY() +
                 '}';

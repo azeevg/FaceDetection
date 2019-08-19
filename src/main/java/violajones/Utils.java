@@ -1,3 +1,5 @@
+package violajones;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;

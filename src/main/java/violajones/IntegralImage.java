@@ -1,3 +1,7 @@
+package violajones;
+
+import violajones.common.Point;
+import violajones.common.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
