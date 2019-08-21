@@ -2,6 +2,7 @@ package violajones;
 
 import violajones.common.Vector;
 import org.jetbrains.annotations.NotNull;
+import violajones.grayScale.GrayScaleConverter;
 import violajones.visualizer.Frame;
 
 import java.awt.image.BufferedImage;
@@ -10,17 +11,19 @@ import java.util.List;
 
 public class FeatureHandler {
     private final int featureWindowSize;
+    private GrayScaleConverter grayScaleConverter;
     private final int step;
     private final List<Feature> features;
 
-    public FeatureHandler(@NotNull final List<Feature> features, final int featureWindowSize) {
+    public FeatureHandler(@NotNull final List<Feature> features, final int featureWindowSize, GrayScaleConverter converter) {
         this.features = features;
         this.featureWindowSize = featureWindowSize;
+        grayScaleConverter = converter;
         step = this.featureWindowSize / 3;
     }
 
     public List<Double> getFeatureVector(@NotNull final BufferedImage image, @NotNull final Frame scanningWindow) {
-        final IntegralImage integralImage = new IntegralImage(image);
+        final IntegralImage integralImage = new IntegralImage(image, grayScaleConverter);
         final List<Double> result = new ArrayList<>();
         features
                 .stream()

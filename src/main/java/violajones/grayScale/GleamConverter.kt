@@ -1,4 +1,4 @@
-package violajones
+package violajones.grayScale
 
 import java.awt.Color
 import kotlin.math.pow

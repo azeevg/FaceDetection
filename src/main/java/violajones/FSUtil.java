@@ -2,14 +2,18 @@ package violajones;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
+import violajones.grayScale.GleamConverter;
+import violajones.grayScale.GrayScaleConverter;
 import violajones.visualizer.Frame;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 public final class FSUtil {
@@ -81,7 +85,8 @@ public final class FSUtil {
         joiner.add("" + imageType.getNumber()); //fastest way to convert number->string
         joiner.add(""); //uri
         joiner.add("1"); //group
-        new FeatureHandler(features, FEATURE_WINDOW_SIZE)
+        GrayScaleConverter grayScaleConverter = new GleamConverter();
+        new FeatureHandler(features, FEATURE_WINDOW_SIZE, grayScaleConverter)
                 .getFeatureVector(image, new Frame(0, 0, image.getWidth(), image.getHeight())).
                 forEach(d -> joiner.add(String.format(Locale.ENGLISH, "%.2f", d)));
 

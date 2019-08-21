@@ -3,6 +3,7 @@ package violajones;
 import violajones.common.Point;
 import violajones.common.Vector;
 import org.jetbrains.annotations.NotNull;
+import violajones.grayScale.GrayScaleConverter;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,13 +13,13 @@ import java.util.List;
 public class IntegralImage {
     private final double[][] integralImage;
 
-    public IntegralImage(@NotNull final BufferedImage bufferedImage) {
+    public IntegralImage(@NotNull final BufferedImage bufferedImage, GrayScaleConverter grayScaleConverter) {
 
         double[][] matrixOfBrightness = new double[bufferedImage.getHeight()][bufferedImage.getWidth()];
 
         for (int i = 0; i < bufferedImage.getHeight(); i++) {
             for (int j = 0; j < bufferedImage.getWidth(); j++) {
-                matrixOfBrightness[i][j] = calculateBrightness(bufferedImage.getRGB(j, i));
+                matrixOfBrightness[i][j] = grayScaleConverter.convert(bufferedImage.getRGB(j, i));
             }
         }
 
@@ -41,18 +42,18 @@ public class IntegralImage {
         return (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255.0;
     }
 
-    private double getBrightness(final int x, final int y) {
+    public double getBrightness(final int x, final int y) {
         return integralImage[y][x];
     }
 
-    private double getBrightness(@NotNull final Region region, @NotNull final Vector shift) {
+    public double getBrightness(@NotNull final Region region, @NotNull final Vector shift) {
         // it works only with rectangles, which edges are parallel to the axes
         final List<Point> points = region.getVertexes();
 
         Point point = points.get(2);
         Double result = getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
         point = points.get(0);
-        result -= getBrightness((int) (point.getX() + shift.getX()), (int) (point.getY() + shift.getY()));
+        result -= getBrightness((int) (point.getX() - 1 + shift.getX()), (int) (point.getY() - 1 + shift.getY()));
 
         return result;
     }
